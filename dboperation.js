@@ -74,9 +74,25 @@ async function getAllReciever(){
     }
 }
 
+async function getLastlogin(username){
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request()
+        .input('input_username',sql.VarChar,username) 
+        .query("Select Top 1 convert(varchar, last_logIn, 100) as last_logIn from tbl_applog where username=@input_username order by last_logIn desc");
+        console.log(result.recordsets);
+        console.log(username);
+        return result.recordsets;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     loginRequest : loginRequest,
     changePassword:changePassword,
     registerDonor:registerDonor,
-    getAllReciever:getAllReciever
+    getAllReciever:getAllReciever,
+    getLastlogin:getLastlogin
 }

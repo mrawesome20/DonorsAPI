@@ -55,6 +55,13 @@ router.route('/changepassword').post((request,response)=>{
      })
  })
 
+ router.route('/getLastLogin').post((request,response)=>{
+    let body = {...request.body}
+    dboperation.getLastlogin(body.username).then(result =>{
+        response.status(201).json(result);
+    })
+})
+
 
 var port = process.env.PORT || 8013;
 app.listen(port);
