@@ -1,98 +1,208 @@
-var config = require('./dbconfig');
+var sqlconfig = require('./dbconfig');
 const sql = require('mssql');
 
-async function loginRequest(username,password){
-    try {
-        let pool = await sql.connect(config);
-        let result = await pool.request()
-        .input('password',sql.VarChar,password) 
-        .input('username',sql.VarChar,username) 
-        .input('type',sql.VarChar,'Login') 
-        // .query("SELECT TOP 1 firstname from tbl_donorinfo where username= @input_username and password = @input_password");
-        .execute('USP_Login_Update');
-        console.log(result.recordsets);
-        return result.recordsets;
-    }
-    catch (error) {
-        console.log(error);
+
+function APIChangePassword(request,response){
+    console.log('APIChangePassword');
+    let body = {...request.body};
+    try{
+    //  sqlconfig.connect((err)=>{ 
+    //      if(!err){
+             sqlconfig.query("CALL USP_Login_Update(?,?,?)",
+             [body.username,body.password,'update'],
+             (err,rows,fields)=>{
+                 if(!err){
+                     response.status(201).json(JSON.parse(JSON.stringify(rows)));
+                 }else{
+                     console.log('Query Error => ' + err);
+                     response.status(400).json(err);        
+                 }                
+             });
+    //      }else{
+    //          console.log('Sql Connection Error => ' + err);
+    //          response.status(400).json(err);
+    //      }
+    //  });
+    }catch(error){
+         console.log('Something went wrong => ' + err);
+         response.status(400).json(error);
     }
 }
 
-async function changePassword(username,password){
-    try {
-        let pool = await sql.connect(config);
-        let result = await pool.request()                   
-        .input('password',sql.VarChar,password) 
-        .input('username',sql.VarChar,username) 
-        .input('type',sql.VarChar,'update')
-        // .query("UPDATE [tbl_donorinfo] SET password = @input_password where username = @input_username");
-        .execute('USP_Login_Update');
-        console.log(result.recordsets);
-         return result.recordsets;
+function APIGetAllReciever(request,response){
+    console.log('APIGetAllReciever');
+    let body = {...request.body};
+    try{
+    //  sqlconfig.connect((err)=>{ 
+    //      if(!err){
+             sqlconfig.query("Select * from donationdb.tbl_recieverinfo",///No Parameters,
+             (err,rows,fields)=>{
+                 if(!err){
+                     console.log(rows);
+                     response.status(201).json(JSON.parse(JSON.stringify(rows)));
+                 }else{
+                     console.log('Query Error => ' + err);
+                     response.status(400).json(err);        
+                 }                
+             });
+    //      }else{
+    //          console.log('Sql Connection Error => ' + err);
+    //          response.status(400).json(err);
+    //      }
+    //  });
+    }catch(error){
+         console.log('Something went wrong => ' + err);
+         response.status(400).json(error);
     }
-    catch (error) {
-        console.log(error);
+}
+
+function APIGetAllDonor(request,response){
+    console.log('APIGetAllDonor');
+    let body = {...request.body};
+    try{
+    //  sqlconfig.connect((err)=>{ 
+    //      if(!err){
+             sqlconfig.query("Select * from donationdb.tbl_donorinfo",///No Parameters,
+             (err,rows,fields)=>{
+                 if(!err){
+                     response.status(201).json(JSON.parse(JSON.stringify(rows)));
+                 }else{
+                     console.log('Query Error => ' + err);
+                     response.status(400).json(err);        
+                 }                
+             });
+    //      }else{
+    //          console.log('Sql Connection Error => ' + err);
+    //          response.status(400).json(err);
+    //      }
+    //  });
+    }catch(error){
+         console.log('Something went wrong => ' + err);
+         response.status(400).json(error);
     }
 }
 
 
-async function registerDonor(body){
-    try {
-        let pool = await sql.connect(config);
-        let result = await pool.request()     
-        .input('username',sql.VarChar,body.username) 
-        .input('firstname',sql.VarChar,body.firstname) 
-        .input('lastname',sql.VarChar,body.lastname) 
-        .input('gender',sql.VarChar,body.gender) 
-        .input('Dob',sql.VarChar,body.Dob) 
-        .input('password',sql.VarChar,body.password) 
-        .input('street',sql.VarChar,body.street) 
-        .input('zipcode',sql.VarChar,body.zipcode) 
-        .input('city',sql.VarChar,body.city) 
-        .input('country',sql.VarChar,body.country) 
-        .input('phone',sql.VarChar,body.phone) 
-        .input('emailid',sql.VarChar,body.emailid) 
-        .input('type',sql.VarChar,'insert')
-        .execute('USP_CRUD_Donorinfo');
-         return result.recordsets;
-    }
-    catch (error) {
-        console.log(error);
-    }
-}
-
-
-async function getAllReciever(){
-    try {
-        let pool = await sql.connect(config);
-        let result = await pool.request()
-        .query("Select * from tbl_recieverinfo");
-        return result.recordsets;
-    }
-    catch (error) {
-        console.log(error);
+function APIGetDonor(request,response){
+    console.log('APIGetDonor');
+    let body = {...request.body};
+    try{
+    //  sqlconfig.connect((err)=>{ 
+    //      if(!err){
+             sqlconfig.query("Select * from donationdb.tbl_donorinfo where username = (?)",[body.username],
+             (err,rows,fields)=>{
+                 if(!err){
+                     response.status(201).json(JSON.parse(JSON.stringify(rows)));
+                 }else{
+                     console.log('Query Error => ' + err);
+                     response.status(400).json(err);        
+                 }                
+             });
+    //      }else{
+    //          console.log('Sql Connection Error => ' + err);
+    //          response.status(400).json(err);
+    //      }
+    //  });
+    }catch(error){
+         console.log('Something went wrong => ' + err);
+         response.status(400).json(error);
     }
 }
 
-async function getLastlogin(username){
-    try {
-        let pool = await sql.connect(config);
-        let result = await pool.request()
-        .input('input_username',sql.VarChar,username) 
-        .query("Select Top 1 convert(varchar, last_logIn, 100) as last_logIn from tbl_applog where username=@input_username order by last_logIn desc");
-        console.log(result.recordsets);
-        console.log(username);
-        return result.recordsets;
+function APIGetLastlogin(request,response){
+    console.log('APIGetLastlogin');
+    let body = {...request.body};
+    try{
+    //  sqlconfig.connect((err)=>{ 
+    //      if(!err){
+             sqlconfig.query("select CAST(CONVERT(last_login,DATETIME) AS char) as last_login from donationdb.tbl_applog where username = (?) order by last_login desc limit  1",
+             [body.username],
+             (err,rows,fields)=>{
+                 if(!err){
+                     response.status(201).json(JSON.parse(JSON.stringify(rows)));
+                 }else{
+                     console.log('Query Error => ' + err);
+                     response.status(400).json(err);        
+                 }                
+             });
+    //      }else{
+    //          console.log('Sql Connection Error => ' + err);
+    //          response.status(400).json(err);
+    //      }
+    //  });
+    }catch(error){
+         console.log('Something went wrong => ' + err);
+         response.status(400).json(error);
     }
-    catch (error) {
-        console.log(error);
+ }
+
+function APIRegisterDonor(request,response){
+    console.log('APIRegisterDonor');
+    let body = {...request.body};
+    console.log(body);
+    try{
+    //  sqlconfig.connect((err)=>{ 
+    //      if(!err){
+             sqlconfig.query("CALL USP_CRUD_Donorinfo(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+             [body.username,body.firstname,body.lastname,body.gender,body.Dob,
+                body.password,body.street,body.zipcode,body.city,
+                body.country,body.phone,body.emailid,'insert'],
+             (err,rows,fields)=>{
+                 if(!err){
+                     console.log(rows);
+                     response.status(201).json(JSON.parse(JSON.stringify(rows)));
+                }else{
+                     console.log('Query Error => ' + err);
+                     response.status(400).json(err);      
+                 }                
+             });
+    //      }else{
+    //          console.log('Sql Connection Error => ' + err);
+    //          response.status(400).json(err);
+    //      }
+    //  });
+    }catch(error){
+         console.log('Something went wrong => ' + err);
+         response.status(400).json(error);
     }
+ }
+
+function APILoginRequest(request,response){
+   console.log('APILoginRequest');
+   let body = {...request.body};
+   let username = body.username;
+   let password = body.password;
+   try{
+    // sqlconfig.connect((err)=>{ 
+    //     if(!err){
+            sqlconfig.query("CALL USP_Login_Update(?,?,?)",[username,password,'Login'],
+            (err,rows,fields)=>{
+                if(!err){
+                    response.status(201).json(JSON.parse(JSON.stringify(rows)));
+                }else{
+                    console.log('Query Error => ' + err);
+                    response.status(400).json(err);        
+                }                
+            });
+    //     }else{
+    //         console.log('Sql Connection Error => ' + err);
+    //         response.status(400).json(err);
+    //     }
+    // });
+   }catch(error){
+        console.log('Something went wrong => ' + err);
+        response.status(400).json(error);
+   }
 }
+
+
 
 module.exports = {
-    loginRequest : loginRequest,
-    changePassword:changePassword,
-    registerDonor:registerDonor,
-    getAllReciever:getAllReciever,
-    getLastlogin:getLastlogin
+    APILoginRequest:APILoginRequest,
+    APIRegisterDonor:APIRegisterDonor,
+    APIGetLastlogin:APIGetLastlogin,
+    APIChangePassword:APIChangePassword,
+    APIGetAllReciever:APIGetAllReciever,
+    APIGetAllDonor:APIGetAllDonor,
+    APIGetDonor:APIGetDonor
 }
