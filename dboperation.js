@@ -205,7 +205,7 @@ function APIDonation(request,response){
     console.log(body);
     try{
              sqlconfig.query("CALL USP_Donation(?,?,?,?)",
-             [body.receiver,body.donationAmt,body.uname,''],
+             [body.receiver,body.donationAmt,body.uname,'donate'],
              (err,rows,fields)=>{
                  if(!err){
                      console.log(rows);
