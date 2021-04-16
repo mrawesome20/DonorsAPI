@@ -36,7 +36,27 @@ router.route('/changepassword').post(dboperation.APIChangePassword);
 
  router.route('/getDonor').post(dboperation.APIGetDonor);
 
+ router.route('/updateDonor').post(dboperation.APIUpdateDonor);
+
  router.route('/getLastLogin').post(dboperation.APIGetLastlogin);
+
+ router.route('/giveDonation').post(dboperation.APIDonation);
+
+ router.route('/newReciever').post(dboperation.APINewReciever);
+
+ router.route('/deleteReciever').post(dboperation.APIdeleteReciever);
+
+ router.route('/getallDonation').post(dboperation.APIGetAllDonation);
+
+ router.route('/getDonationData').post(dboperation.APIGetAllDonationData);
+
+ router.route('/getDonationDataMonth').post(dboperation.APIGetAllDonationDataMonth);
+
+ router.route('/getDonationDataYear').post(dboperation.APIGetAllDonationDataYear);
+
+
+
+
 
 
 
